@@ -1,7 +1,5 @@
 # Project-Bhapa
 
-Idea - 1
-Database 
 Generalised Features:
 Pet Owner 
 Pet category [Up for adoption/Not, Breeds] - Adopt[ID], , [Profile]
