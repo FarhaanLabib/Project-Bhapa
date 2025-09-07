@@ -1,5 +1,26 @@
 <?php
 // lostandfound.php
+include 'db.php';
+
+// Fetch Lost pets
+$lostPets = [];
+$result = $conn->query("SELECT * FROM lost ORDER BY date_reported DESC");
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $lostPets[] = $row;
+    }
+}
+
+// Fetch Found pets
+$foundPets = [];
+$result = $conn->query("SELECT * FROM found ORDER BY date_reported DESC");
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $foundPets[] = $row;
+    }
+}
+
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,43 +68,32 @@
       font-weight: bold;
       margin-bottom: 40px;
     }
+    .section {
+      margin: 40px auto;
+      max-width: 1000px;
+      text-align: left;
+    }
+    .section h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
     .card {
-      max-width: 600px;
-      margin: 20px auto;
       background: #fff;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      text-align: left;
+      margin-bottom: 20px;
     }
-    .card h2 {
+    .card h3 {
       margin-top: 0;
+      color: orange;
     }
-    .form-group {
-      margin-bottom: 15px;
+    .card p {
+      margin: 5px 0;
     }
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-    }
-    button {
-      padding: 10px 20px;
-      background: orange;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background: darkorange;
+    .empty {
+      color: #777;
+      font-style: italic;
     }
   </style>
 </head>
@@ -103,6 +113,48 @@
     Help Lost Pets Find Their Way Home ❤️
   </div>
   <p>Welcome to our Lost & Found pet community. If you lost a pet, report it immediately. If you found one, help reunite it with the owner. Together we can make a difference.</p>
+
+  <!-- Lost Pets Section -->
+  <div class="section">
+    <h2>🐶 Lost Pets</h2>
+    <?php if (count($lostPets) > 0): ?>
+      <?php foreach ($lostPets as $pet): ?>
+        <div class="card">
+          <h3><?= htmlspecialchars($pet['animal']) ?> - <?= htmlspecialchars($pet['name'] ?? 'Unknown') ?></h3>
+          <p><strong>Breed:</strong> <?= htmlspecialchars($pet['breed'] ?? 'Unknown') ?></p>
+          <p><strong>Age:</strong> <?= htmlspecialchars($pet['age'] ?? 'Unknown') ?></p>
+          <p><strong>Last Seen:</strong> <?= htmlspecialchars($pet['last_seen']) ?></p>
+          <p><strong>Date Reported:</strong> <?= htmlspecialchars($pet['date_reported']) ?></p>
+          <?php if (!empty($pet['pet_id'])): ?>
+            <p><strong>Pet ID:</strong> <?= htmlspecialchars($pet['pet_id']) ?></p>
+          <?php endif; ?>
+        </div>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p class="empty">No lost pets reported yet.</p>
+    <?php endif; ?>
+  </div>
+
+  <!-- Found Pets Section -->
+  <div class="section">
+    <h2>🐾 Found Pets</h2>
+    <?php if (count($foundPets) > 0): ?>
+      <?php foreach ($foundPets as $pet): ?>
+        <div class="card">
+          <h3><?= htmlspecialchars($pet['animal']) ?> - <?= htmlspecialchars($pet['name'] ?? 'Unknown') ?></h3>
+          <p><strong>Breed:</strong> <?= htmlspecialchars($pet['breed'] ?? 'Unknown') ?></p>
+          <p><strong>Age:</strong> <?= htmlspecialchars($pet['age'] ?? 'Unknown') ?></p>
+          <p><strong>Found At:</strong> <?= htmlspecialchars($pet['found_at']) ?></p>
+          <p><strong>Date Reported:</strong> <?= htmlspecialchars($pet['date_reported']) ?></p>
+          <?php if (!empty($pet['pet_id'])): ?>
+            <p><strong>Pet ID:</strong> <?= htmlspecialchars($pet['pet_id']) ?></p>
+          <?php endif; ?>
+        </div>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p class="empty">No pets reported as found yet.</p>
+    <?php endif; ?>
+  </div>
 </main>
 
 </body>

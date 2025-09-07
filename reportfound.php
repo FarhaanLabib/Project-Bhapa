@@ -1,5 +1,31 @@
 <?php
-// reportfound.php
+include 'db.php'; // database connection
+
+$message = '';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $animal = $_POST['animal'] ?? '';
+    $breed = $_POST['breed'] ?? '';
+    $age = $_POST['age'] ?? '';
+    $name = $_POST['name'] ?? '';
+    $foundat = $_POST['foundat'] ?? '';
+    $datereported = $_POST['datereported'] ?? '';
+    $petid = $_POST['petid'] ?? '';
+
+    if (empty($animal) || empty($foundat) || empty($datereported)) {
+        $message = "Please fill in all required fields!";
+    } else {
+        $stmt = $conn->prepare("INSERT INTO found (animal, breed, age, name, found_at, date_reported, pet_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssss", $animal, $breed, $age, $name, $foundat, $datereported, $petid);
+
+        if ($stmt->execute()) {
+            $message = "success";
+        } else {
+            $message = "Error: " . $stmt->error;
+        }
+        $stmt->close();
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,6 +45,8 @@
     }
     button { padding:10px 20px; background:orange; border:none; border-radius:8px; color:white; font-weight:bold; cursor:pointer; }
     button:hover { background:darkorange; }
+    .msg-success { padding:10px; background:#d4edda; color:#155724; border-radius:8px; margin-bottom:15px; }
+    .msg-error { padding:10px; background:#f8d7da; color:#721c24; border-radius:8px; margin-bottom:15px; }
   </style>
 </head>
 <body>
@@ -34,10 +62,19 @@
 
 <div class="card">
   <h2>Report Found Pet</h2>
-  <form>
+
+  <?php if (!empty($message)): ?>
+    <?php if ($message == 'success'): ?>
+      <div class="msg-success">✅ Reported Successfully!</div>
+    <?php else: ?>
+      <div class="msg-error"><?= htmlspecialchars($message) ?></div>
+    <?php endif; ?>
+  <?php endif; ?>
+
+  <form method="POST">
     <div class="form-group">
       <label>Animal</label>
-      <input type="text" name="animal" placeholder="Dog, Cat...">
+      <input type="text" name="animal" placeholder="Dog, Cat..." required>
     </div>
     <div class="form-group">
       <label>Breed</label>
@@ -53,15 +90,11 @@
     </div>
     <div class="form-group">
       <label>Found At</label>
-      <input type="text" name="foundat" placeholder="Location">
-    </div>
-    <div class="form-group">
-      <label>Email</label>
-      <input type="email" name="email">
+      <input type="text" name="foundat" placeholder="Location" required>
     </div>
     <div class="form-group">
       <label>Date Reported</label>
-      <input type="date" name="datereported">
+      <input type="date" name="datereported" required>
     </div>
     <div class="form-group">
       <label>Pet ID (if registered)</label>
