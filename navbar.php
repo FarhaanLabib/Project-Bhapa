@@ -264,8 +264,8 @@ if (isset($_SESSION['user']) && in_array($current_page, $restricted_pages)) {
     <?php $firstLetter = strtoupper(substr($_SESSION['user'], 0, 1)); ?>
     <div id="userCircle" onclick="toggleDropdown()" title="User Menu"><?php echo $firstLetter; ?>
       <div id="dropdownMenu">
-        <a href="#"><i class="fas fa-user-circle"></i> My Profile</a>
-        <a href="booking.php"><i class="fas fa-ticket-alt"></i> My Tickets</a>
+        <a href="profile.php"><i class="fas fa-user-circle"></i> My Profile</a>
+        <a href="mypets.php"><i class="fas fa-ticket-alt"></i> My Pets</a>
         <a href="#"><i class="fas fa-cog"></i> Settings</a>
         <form method="post" action="logout.php">
           <button type="submit"><i class="fas fa-sign-out-alt"></i> Logout</button>
