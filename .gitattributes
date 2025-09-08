@@ -1,0 +1,11 @@
+# Normalize line endings to LF in repo and working tree
+
+*.php text eol=lf
+
+# Optionally uncomment to enforce LF for more types
+# *.css text eol=lf
+# *.js  text eol=lf
+# *.html text eol=lf
+# *.md  text eol=lf
+
+

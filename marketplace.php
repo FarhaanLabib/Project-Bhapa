@@ -42,12 +42,30 @@ $products = [
     ['id'=>6,'product_name'=>'Bird Swing','Description'=>'Fun swing for parrots and small birds','Pet_type'=>'Bird','Category'=>'Toys','Brand'=>'FeatherFun','breedspecific'=>'Cockatiel','image_url'=>'https://placebear.com/401/251','price'=>15.99]
 ];
 
-// Calculate total items in cart (FIXED VERSION)
+// Calculate total items in cart and prepare cart data
 $cart_count = 0;
+$cart_items = [];
+$cart_total = 0;
+
 if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $item) {
         if (isset($item['quantity'])) {
             $cart_count += $item['quantity'];
+            
+            // Find product details for cart display
+            foreach ($products as $product) {
+                if ($product['id'] == $item['id']) {
+                    $cart_items[] = [
+                        'id' => $product['id'],
+                        'name' => $product['product_name'],
+                        'price' => $product['price'],
+                        'image' => $product['image_url'],
+                        'quantity' => $item['quantity']
+                    ];
+                    $cart_total += $product['price'] * $item['quantity'];
+                    break;
+                }
+            }
         }
     }
 }
@@ -264,11 +282,212 @@ nav a:hover {
   gap: 8px;
   font-weight: 600;
   transition: var(--transition);
+  position: relative;
+  cursor: pointer;
 }
 
 .cart-box:hover {
   background: var(--secondary);
   color: white;
+}
+
+/* Cart Dropdown */
+.cart-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  min-width: 350px;
+  max-width: 400px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+}
+
+.cart-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.cart-dropdown-header {
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+  background: var(--light);
+  border-radius: 12px 12px 0 0;
+}
+
+.cart-dropdown-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cart-dropdown-title i {
+  color: var(--secondary);
+}
+
+.cart-items {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #f1f3f4;
+  transition: var(--transition);
+}
+
+.cart-item:hover {
+  background: #f8f9fa;
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+.cart-item-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.cart-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cart-item-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-item-name {
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cart-item-price {
+  color: var(--secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.cart-item-quantity {
+  background: var(--light);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-left: 10px;
+}
+
+.cart-dropdown-footer {
+  padding: 20px;
+  border-top: 1px solid #e9ecef;
+  background: #f8f9fa;
+  border-radius: 0 0 12px 12px;
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.cart-total-label {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.cart-total-amount {
+  font-weight: 700;
+  color: var(--secondary);
+  font-size: 1.2rem;
+}
+
+.cart-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.cart-btn {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.cart-btn-primary {
+  background: var(--secondary);
+  color: white;
+}
+
+.cart-btn-primary:hover {
+  background: #16a085;
+  transform: translateY(-2px);
+}
+
+.cart-btn-secondary {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.cart-btn-secondary:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.cart-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--gray);
+}
+
+.cart-empty i {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.cart-empty h3 {
+  margin-bottom: 10px;
+  color: var(--primary);
+}
+
+.cart-empty p {
+  margin: 0;
+  font-size: 0.9rem;
 }
 
 /* Hero Section */
@@ -500,10 +719,53 @@ nav a:hover {
   <div class="logo"><i class="fas fa-paw"></i> Pet Marketplace</div>
   <nav>
     <a href="index.php">Home</a>
-    <a href="cart.php" class="cart-box">
+    <div class="cart-box" onclick="toggleCartDropdown()">
       <i class="fas fa-shopping-cart"></i>
       <span>Cart: <?php echo $cart_count; ?> item(s)</span>
-    </a>
+      
+      <div class="cart-dropdown" id="cartDropdown">
+        <div class="cart-dropdown-header">
+          <h3 class="cart-dropdown-title">
+            <i class="fas fa-shopping-cart"></i>
+            Shopping Cart
+          </h3>
+        </div>
+        
+        <?php if (empty($cart_items)): ?>
+          <div class="cart-empty">
+            <i class="fas fa-shopping-cart"></i>
+            <h3>Your cart is empty</h3>
+            <p>Add some products to get started!</p>
+          </div>
+        <?php else: ?>
+          <div class="cart-items">
+            <?php foreach ($cart_items as $item): ?>
+              <div class="cart-item">
+                <div class="cart-item-image">
+                  <img src="<?php echo $item['image']; ?>" alt="<?php echo htmlspecialchars($item['name']); ?>">
+                </div>
+                <div class="cart-item-details">
+                  <div class="cart-item-name"><?php echo htmlspecialchars($item['name']); ?></div>
+                  <div class="cart-item-price">$<?php echo number_format($item['price'], 2); ?></div>
+                </div>
+                <div class="cart-item-quantity"><?php echo $item['quantity']; ?></div>
+              </div>
+            <?php endforeach; ?>
+          </div>
+          
+          <div class="cart-dropdown-footer">
+            <div class="cart-total">
+              <span class="cart-total-label">Total:</span>
+              <span class="cart-total-amount">$<?php echo number_format($cart_total, 2); ?></span>
+            </div>
+            <div class="cart-actions">
+              <a href="cart.php" class="cart-btn cart-btn-secondary">View Cart</a>
+              <a href="checkout.php" class="cart-btn cart-btn-primary">Checkout</a>
+            </div>
+          </div>
+        <?php endif; ?>
+      </div>
+    </div>
   </nav>
 </header>
 
@@ -616,6 +878,22 @@ nav a:hover {
 </section>
 
 <script>
+// Cart dropdown functionality
+function toggleCartDropdown() {
+  const dropdown = document.getElementById('cartDropdown');
+  dropdown.classList.toggle('show');
+}
+
+// Close cart dropdown when clicking outside
+document.addEventListener('click', function(event) {
+  const cartBox = document.querySelector('.cart-box');
+  const dropdown = document.getElementById('cartDropdown');
+  
+  if (!cartBox.contains(event.target)) {
+    dropdown.classList.remove('show');
+  }
+});
+
 // Quantity controls functionality
 document.querySelectorAll('.quantity-controls').forEach(control => {
   const minusBtn = control.querySelector('.quantity-btn:first-child');
